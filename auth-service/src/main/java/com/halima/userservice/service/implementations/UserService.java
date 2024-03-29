@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -43,5 +45,20 @@ public class UserService implements IUserService {
     public void validateToken(String token)
     {
         jwtService.validateToken(token);
+    }
+
+    public boolean delete(Long userId) {
+        Optional<User> deletedUser = userRepository.findById(userId);
+        if (deletedUser.isPresent()) {
+            userRepository.deleteById(userId);
+            return true;
+        } else {
+            throw new RuntimeException(USER_NOT_FOUND + userId);
+        }
+    }
+
+    public List<UserDTO> getAll() {
+        List<User> users = userRepository.findAll();
+        return users.stream().map(user -> modelMapper.map(user, UserDTO.class)).toList();
     }
 }

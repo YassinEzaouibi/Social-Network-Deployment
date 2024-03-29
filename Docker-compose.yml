@@ -1,16 +1,128 @@
 version: '3.1'
 
 services:
+ # DBs part
+ postgresql:
+    container_name: postgre-sql-container
+    image: postgres
+    environment:
+     POSTGRES_USER: postgres
+     POSTGRES_PASSWORD: yasso
+     POSTGRES_DB: social_networks
+     PGDATA: /data/postgres
+    volumes:
+        -  /var/lib/postgresql/data
+    ports:
+     - "5432:5432"
+    networks:
+     - db
+    restart: unless-stopped
 
- zipkin:
-  container_name: zipkin
-  image: openzipkin/zipkin
-  ports:
-   - "9411:9411"
-  networks:
-   - zipkin
+ discovery-service:
+   build: ./discovery
+   container_name: discovery-service-container
+   ports:
+     - '8761:8761'
+   expose:
+     - '8761'
+   healthcheck:
+     test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
+     interval: 10s
+   networks:
+     - db
 
+ auth-service:
+   build: ./auth-service
+   container_name: auth-service-container
+   ports:
+     - '8101:8101'
+   expose:
+     - '8101'
+   networks:
+     - social-network-app
+   depends_on:
+     - postgresql
+     - discovery-service
+     - gateway-service
+
+ gateway-service:
+   build: ./gateway
+   container_name: gateway-container
+   ports:
+     - '8222:8222'
+   expose:
+     - '8222'
+   networks:
+     - social-network-app
+   depends_on:
+     - discovery-service
+
+ friend-service:
+   build: ./Friend-service
+   container_name: friend-service-container
+   ports:
+     - '8078:8078'
+   expose:
+     - '8078'
+   networks:
+     - social-network-app
+   depends_on:
+     - social-network-geteway-service
+
+ social-network-interaction-service:
+   build: ./interaction-service
+   container_name: social-network-interaction-service
+   ports:
+     - '8070:8070'
+   expose:
+     - '8070'
+   networks:
+     - social-network-app
+   depends_on:
+     - social-network-geteway-service
+
+ social-network-media-service:
+   build: ./media-service
+   container_name: social-network-media-service
+   ports:
+     - '8016:8016'
+   expose:
+     - '8016'
+   networks:
+     - social-network-app
+   depends_on:
+     - social-network-geteway-service
+
+ social-network-user-service:
+   build: ./User-service
+   container_name: social-network-user-service
+   ports:
+     - '8083:8083'
+   expose:
+     - '8083'
+   networks:
+     - social-network-app
+   depends_on:
+     - social-network-geteway-service
+
+
+
+
+
+
+# this part is for the zipkin network
 networks:
   zipkin:
     driver: bridge
+  db:
+    driver: bridge
 
+
+# zipkin part
+# zipkin:
+#  container_name: zipkin
+#  image: openzipkin/zipkin
+#  ports:
+#   - "9411:9411"
+#  networks:
+#   - zipkin

@@ -4,7 +4,9 @@ import com.example.notificationservice.client.FriendClient;
 import com.example.notificationservice.dto.NotificationDto;
 import com.example.notificationservice.dto.UserDTO;
 import com.example.notificationservice.entity.Notification;
+
 import com.example.notificationservice.exception.NotFoundException;
+
 import com.example.notificationservice.repository.INotificationRepository;
 import com.example.notificationservice.service.INotificationService;
 import com.nabilaitnacer.servicepost.dto.PostProducerDto;
@@ -27,13 +29,11 @@ public class NotificationService implements INotificationService {
     private static final String NOTIFICATION_NOT_FOUND = "Notification not found with this id : ";
 
     @Override
-    public void sendPostCreationNotification(PostProducerDto postNotif)
-    {
+    public void sendPostCreationNotification(PostProducerDto postNotif) {
         List<UserDTO> users = friendClient.getAllFriendsProfile(String.valueOf(postNotif.getSenderId())).getBody();
 
         assert users != null;
-        for (UserDTO receivedFriend : users)
-        {
+        for (UserDTO receivedFriend : users) {
 
             notifyFriends(
                     Notification
@@ -47,16 +47,14 @@ public class NotificationService implements INotificationService {
         }
     }
 
-    public void notifyFriends(Notification notification)
-    {
-       // log.info("friend notifiy : {}", notification);
+    public void notifyFriends(Notification notification) {
+        // log.info("friend notifiy : {}", notification);
         iNotificationRepository.save(notification);
     }
 
     @Override
-    public List<NotificationDto> getUnseenNotifications(Long userReceiver)
-    {
-       List<Notification> notifications = iNotificationRepository.findByUserReceiverAndSeenIsFalse(userReceiver);
+    public List<NotificationDto> getUnseenNotifications(Long userReceiver) {
+        List<Notification> notifications = iNotificationRepository.findByUserReceiverAndSeenIsFalse(userReceiver);
         return notifications
                 .stream()
                 .map((notification) -> modelMapper.map(notification, NotificationDto.class))
@@ -64,9 +62,10 @@ public class NotificationService implements INotificationService {
     }
 
     @Override
-    public void markNotificationAsSeen(Long notificationId)
-    {
-        Notification notification = iNotificationRepository.findById(notificationId).orElseThrow(() -> new NotFoundException(NOTIFICATION_NOT_FOUND + notificationId));
+    public void markNotificationAsSeen(Long notificationId) {
+        Notification notification = iNotificationRepository.findById(notificationId).orElseThrow(
+                () -> new NotFoundException(NOTIFICATION_NOT_FOUND + notificationId)
+        );
         notification.setSeen(true);
         iNotificationRepository.save(notification);
     }

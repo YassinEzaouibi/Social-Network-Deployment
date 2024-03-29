@@ -1,7 +1,7 @@
-# Use the official Redis image as a base
-FROM redis:latest
+FROM openjdk:8-jdk-alpine
+LABEL authors="yasso"
 
+WORKDIR /app
 
-
-# Command to run when the container starts
-CMD [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+COPY target/feeds-service-0.0.1-SNAPSHOT.jar feeds.jar
+ENTRYPOINT ["java","-jar", "feeds.jar"]

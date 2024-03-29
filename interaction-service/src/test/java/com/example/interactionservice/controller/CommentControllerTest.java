@@ -62,19 +62,7 @@ class CommentControllerTest {
     }
 
     @Test
-    public void saveComment() throws Exception {
-        when(commentService.save(1L, commentDto)).thenReturn(commentDto);
-
-        ResultActions response = mockMvc.perform(post("/api/v1/comments/post/1")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(comment)));
-
-        response.andExpect(MockMvcResultMatchers.status().isCreated())
-                .andDo(MockMvcResultHandlers.print());
-    }
-
-    @Test
-    public void updateComment() throws Exception {
+    void updateComment() throws Exception {
         when(commentService.update(1L, commentDto)).thenReturn(commentDto);
 
         ResultActions response = mockMvc.perform(put("/api/v1/comments/1")
@@ -86,7 +74,20 @@ class CommentControllerTest {
     }
 
     @Test
-    public void getByIdComment() throws Exception {
+    void saveComment() throws Exception {
+        when(commentService.save(1L, commentDto)).thenReturn(commentDto);
+
+        ResultActions response = mockMvc.perform(post("/api/v1/comments/post/1")
+                .header("id", "someId")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(comment)));
+
+        response.andExpect(MockMvcResultMatchers.status().isCreated())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    void getByIdComment() throws Exception {
         when(commentService.getById(1L)).thenReturn(commentDto);
 
         ResultActions response = mockMvc.perform(get("/api/v1/comments/1")
@@ -97,7 +98,7 @@ class CommentControllerTest {
     }
 
     @Test
-    public void getAllComments() throws Exception {
+    void getAllComments() throws Exception {
         when(commentService.getAll()).thenReturn(Collections.singletonList(commentDto));
 
         ResultActions response = mockMvc.perform(get("/api/v1/comments")
@@ -108,7 +109,7 @@ class CommentControllerTest {
     }
 
     @Test
-    public void getCommentsByPost() throws Exception {
+    void getCommentsByPost() throws Exception {
         when(commentService.getAllCommentsByPostId(1L)).thenReturn(Collections.singletonList(commentDto));
 
         ResultActions response = mockMvc.perform(get("/api/v1/comments/post/1")
@@ -119,7 +120,7 @@ class CommentControllerTest {
     }
 
     @Test
-    public void deleteComment() throws Exception {
+    void deleteComment() throws Exception {
         doNothing().when(commentService).delete(1L);
 
         ResultActions response = mockMvc.perform(delete("/api/v1/comments/1")

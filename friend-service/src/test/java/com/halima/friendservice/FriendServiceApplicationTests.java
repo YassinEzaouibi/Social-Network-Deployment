@@ -1,4 +1,4 @@
-package com.media.service.service.impl;
+package com.halima.friendservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +8,7 @@ import org.springframework.context.ApplicationContext;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class MediaServiceImplTest {
+class FriendServiceApplicationTests {
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -16,6 +16,5 @@ class MediaServiceImplTest {
     void contextLoads() {
         assertThat(applicationContext).isNotNull();
     }
-
 
 }

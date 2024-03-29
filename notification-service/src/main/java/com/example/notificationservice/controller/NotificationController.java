@@ -18,14 +18,12 @@ public class NotificationController {
     private final INotificationService iNotificationService;
 
     @GetMapping("/getUnSeen")
-    public ResponseEntity<List<NotificationDto>> allNotifUnSeenForUserConnect(@RequestHeader("id") String userConnect)
-    {
+    public ResponseEntity<List<NotificationDto>> allNotifUnSeenForUserConnect(@RequestHeader("id") String userConnect) {
         return new ResponseEntity<>(iNotificationService.getUnseenNotifications(Long.valueOf(userConnect)), HttpStatus.OK);
     }
 
     @PutMapping("/markAsSeen/{notificationId}")
-    public ResponseEntity<Void> markNotificationAsSeen(@PathVariable Long notificationId)
-    {
+    public ResponseEntity<Void> markNotificationAsSeen(@PathVariable Long notificationId) {
         iNotificationService.markNotificationAsSeen(notificationId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

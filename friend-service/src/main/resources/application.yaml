@@ -1,15 +1,16 @@
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
 server:
-  port: 8074
+  port: 8078
 
 spring:
   application:
-    name: post-service
-  kafka:
-    producer:
-      bootstrap-servers: localhost:9092
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-
+    name: friend-service
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://localhost:5432/social_networks
@@ -20,8 +21,10 @@ spring:
       ddl-auto: update
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-
   cloud:
+    config:
+      enabled: false
+
     openfeign:
       circuitbreaker:
         enabled: true
@@ -35,3 +38,11 @@ resilience4j:
         automatic-transition-from-open-to-half-open-enabled: true
         permittedNumberOfCallsInHalfOpenState: 4
         waitDurationInOpenState: 10000
+
+
+#      management:
+#        tracing:
+#          sampling:
+#            probability: 1.0
+
+
